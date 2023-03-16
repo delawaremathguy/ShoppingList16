@@ -39,6 +39,7 @@ final class PersistentStore: ObservableObject {
 		// identifier.
 		// and to make this work, you'll also need to update the bundle identifier
 		// (it cannot be com.dela.ware.math.ShoppingList).
+#warning("⚠️ Please choose correct definition of Persistent Container")
 #if targetEnvironment(simulator)
 		// i avoid using the cloud with the simulator.  reason: i prefer to keep the simulator
 		// off the cloud and away from real data that's being used on-device and shared with the
@@ -49,7 +50,6 @@ final class PersistentStore: ObservableObject {
 #else
 		// but for a device, YOU must decide whether you'll just keep all data local, or
 		// whether you feel the need to share with your other devices through the cloud.
-#warning("Please choose correct definition of Persistent Container")
 		// USE  THIS DEFINITION (DEFAULT) FOR CONTAINER for on-device-only data storage:
 		let container = NSPersistentContainer(name: "ShoppingList")
 		// OR THIS DEFINITION FOR CONTAINER for on-device data storage shared via the cloud
@@ -77,7 +77,6 @@ final class PersistentStore: ObservableObject {
 		persistentStoreDescriptions.setOption(true as NSNumber,
 																					forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
 		
-	
 		container.loadPersistentStores(completionHandler: { (storeDescription, error) in
 			if let error = error as NSError? {
 				// Replace this implementation with code to handle the error appropriately.

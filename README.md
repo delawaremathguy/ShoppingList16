@@ -18,10 +18,14 @@ Feel free to use this as is, to develop further, to completely ignore, or even j
 
 in ShoppingList16, i will be using iOS16-specific features more often. Please see the section "What's New in ShoppingList16" to see which ones are now used (as of this initial release), as well as some things that have changed in both the UI and at the code level. 
 
+### Most Recent Changes:
+
+* (*16Mar*) the `.xcodeproj` project file(s) have now been added to the repo.  apologies for not catching this.
+
 
 ## General App Structure
 
-The main screen is a TabView (in portrait orientation) or Split View (in landscape oritentation on an iPad) that presents:
+The main screen is a TabView (in portrait orientation) or Split View (in landscape orientation on an iPad) that presents:
 
 ![](Img001.jpg)  ![](Img002.jpg) 
 
@@ -49,7 +53,7 @@ The shopping list and the purchased item list have buttons in the header of the 
 
 The third tab shows a list of all locations, where you can create, edit, reorder (by dragging after tapping the Edit button), and delete `Location`s.  One special Location is the "Unknown Location," which serves as the default location for all new or orphaned items.  I use this special location to mean that "I don't really know where this item is yet, but I'll figure it out at the store." The unknown location always appears last in the list of Locations, and shopping items with this unknown location will come at the bottom of the shopping list. 
 
-Tapping on a Location in the list lets you edit location information, including changing its color, or even deleting it.  the color is settable using the ColorPicker available since iOS 14.  You will also see a list of the Items that are associated with this Location.
+Tapping on a Location in the list lets you edit location information, including changing its color, or even deleting it.  the color is settable using the ColorPicker available since iOS 14.  You will also see a list of the Items that are associated with this Location, with those currently on the shopping list indicated by "cart" symbols.  (new) a long-press on an item lets you quickly toggle whether the item is on the shopping list of not.
 
 * What happens to Items at a Location when the Location is deleted?  The Items are not deleted, but are moved to the Unknown Location.
 
@@ -115,7 +119,7 @@ Thus, some notions to which i have tried to adhere in this updated SL16 are:
 
 * the associated "View.swift" file that defines a View never has to include the line `import CoreData`.
 
-The code of this app **is faithful these three notions**, and I *still* think the result works quite well for such a small app.  
+The code of this app **is faithful to these three notions**, and I *still* think the result works quite well for such a small app.  
 
 ## License
 
