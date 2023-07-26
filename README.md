@@ -81,7 +81,7 @@ Here's what you do next:
 
 * **If you would like to test out this app and decide if it might be of interest to you**, run it on the simulator, go straight to the More... tab on startup and tap the "Load Sample Data" button.  Now you can play with the app.
 
-* **If you plan to install and use this app on a single device**, the app will start with an empty shopping list and a location list having only the special "Unknown Location"; from there you can create your own shopping items and locations associated with those items.  (*Suggestion: add Locations before adding Items!*)  I would recommend that you remove the development-only portion of the Preferences tab before installing the app on a real device (see comments in Development.swift).
+* **If you plan to install and use this app on a single device**, the app will start with an empty shopping list and a location list having only the special "Unknown Location"; from there you can create your own shopping items and locations associated with those items.  (*Suggestion: add Locations before adding Items!*) 
 
 * **If you plan to install and use this app on a device and have it share its data via iCloud with other devices on the same Apple ID**, see advice in previous paragraph; but also go to the PersistentStore.swift file and choose to use `NSPersistentCloudKitContainer`, and follow instructions there about setting up your own CloudKit container.
 

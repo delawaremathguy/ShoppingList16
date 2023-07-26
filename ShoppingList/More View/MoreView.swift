@@ -15,6 +15,8 @@ import UniformTypeIdentifiers
 	// in the sidebar; but who really brings an iPad with them when they shop?
 struct MoreView: View {
 	
+	@EnvironmentObject private var persistentStore: PersistentStore
+	
 		// @State variables to handle presenting of file importer and file
 		// exporter, as well as what document we want to export.
 	@State private var isFileImporterPresented = false
@@ -98,6 +100,7 @@ extension MoreView {
 		locationRepresentations
 			.sorted(by: { $0.visitationOrder < $1.visitationOrder })
 			.forEach { Location.updateOrInsert(locationRepresentation: $0) }
+		persistentStore.save()
 		
 		let locationsAdded = Location.count() - currentLocationCount // now the differential
 		let itemsAdded = Item.count() - currentItemCount // now the differential
@@ -184,6 +187,7 @@ extension MoreView {
 					.locationRepresentations
 					.sorted(by: { $0.visitationOrder < $1.visitationOrder })
 					.forEach { Location.updateOrInsert(locationRepresentation: $0) }
+				persistentStore.save()
 				
 					// this is the only tricky thing ...we have incorporated the incoming,
 					// but before we post a Success alert, we'll wait just a bit to let SwiftUI
