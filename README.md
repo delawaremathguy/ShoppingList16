@@ -19,8 +19,10 @@ Feel free to use this as is, to develop further, to completely ignore, or even j
 ## Latest Release: 25 July, 2023
 
 * (*25Jul*) an Archive feature (Export/Import) is now available so that you can export all ShoppingList data to a file through the Files App, and import ShoppingList data from the Files App.  this will be useful if 
-    -- you only run the app locally, so you can keep a backup of data (if you're on the cloud, the cloud is your backup)
-    -- you want to share your data with someone else
+
+  - you only run the app locally, so you can keep a backup of data (if you're on the cloud, the cloud is your backup)
+  - you want to share your data with someone else
+  
 	this is achieved by using .fileImporter and .fileExporter (which are iOS 14 features).
 	
 	
