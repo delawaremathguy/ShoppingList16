@@ -233,9 +233,9 @@ extension Item {
 		return object(id: id, context: persistentStore.context) as Item?
 	}
 	
-	// addNewItem is the user-facing add of a new entity.  since these are Identifiable objects, this
-	// makes sure we give the entity a unique id plus default data, then hand it back so the user
-	// can fill in what they want
+		// addNewItem is the user-facing add of a new entity.  since these are Identifiable objects, this
+		// makes sure we give the entity a unique id plus default data, then hand it back so the user
+		// can fill in what they want
 	class func addNewItem() -> Item {
 		let context = persistentStore.context
 		let newItem = Item(context: context)
@@ -247,6 +247,27 @@ extension Item {
 		newItem.location_ = Location.unknownLocation()
 		return newItem
 	}
+	
+		// new function to support updating/inserting new items that come
+		// in from a shopping list document.
+		// the code below adds a new item or updates an existing item, according
+		// to whether we have the id already or not.
+	class func updateOrInsert(itemRepresentation: ItemRepresentation, at location: Location) {
+		if let item = Item.object(withID: itemRepresentation.id) {
+				// we'll not update any property here, although we will make sure that
+				// it is associated with the location that was given to us
+			item.location_ = location
+		} else {
+			let newItem = Item(context: persistentStore.context)
+			newItem.id = itemRepresentation.id
+			newItem.name_ = itemRepresentation.name
+			newItem.quantity_ = Int32(itemRepresentation.quantity)
+			newItem.isAvailable_ = itemRepresentation.isAvailable
+			newItem.onList_ = itemRepresentation.onList
+			newItem.location_ = location
+		}
+	}
+
 	
 	// updates data for an Item that the user has directed from an Add or Modify View.
 	// if the incoming data is not associated with an item, we need to create it first
@@ -302,7 +323,7 @@ extension Item {
 		quantity_ = Int32(draftItem.quantity)
 		onList_ = draftItem.onList
 		isAvailable_ = draftItem.isAvailable
-		location = draftItem.location
+		location_ = draftItem.location
 	}
 	
 }

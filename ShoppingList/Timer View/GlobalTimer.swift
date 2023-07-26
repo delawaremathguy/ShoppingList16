@@ -85,7 +85,7 @@ class InStoreTimer: ObservableObject {
 		previouslyAccumulatedTime += accumulatedRunningTime
 		totalAccumulatedTime = previouslyAccumulatedTime
 
-		// remember when we now shut down
+		// remember when we  shut down
 		lastStopDate = Date()
 		// throw out the timer
 		timer!.invalidate()

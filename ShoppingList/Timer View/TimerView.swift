@@ -49,7 +49,7 @@ struct TimerView: View {
 				Spacer()
 				
 			}
-			.navigationBarTitle("In-Store Timer")
+//			.navigationBarTitle("In-Store Timer")
 		
 	}
 	

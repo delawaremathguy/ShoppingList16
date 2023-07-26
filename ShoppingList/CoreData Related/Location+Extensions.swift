@@ -99,6 +99,11 @@ extension Location: Comparable {
 	class func count() -> Int {
 		return count(context: persistentStore.context)
 	}
+	
+		// added for convenience when we handle archiving data.
+	class func allLocations() -> [Location] {
+		return allObjects(context: persistentStore.context) as! [Location]
+	}
 
 	// return a list of all user-defined locations, excluding the unknown location
 	class func allUserLocations() -> [Location] {
@@ -113,6 +118,61 @@ extension Location: Comparable {
 		let newLocation = Location(context: persistentStore.context)
 		newLocation.id = UUID()
 		return newLocation
+	}
+		
+		// Added to support archiving ...
+		// this does a combination "insert if needed, else update" operation,
+		// based on the id property.
+	class func updateOrInsert(locationRepresentation: LocationRepresentation) {
+		
+			//  if the incoming representation is for an archived unknownLocation, then
+			//  we will only be adding items to our (existing) unknown location, and we will
+			//  not update any location properties: the UL and its customization is unique to us.
+		if locationRepresentation.visitationOrder == kUnknownLocationVisitationOrder {
+			locationRepresentation.items.forEach {
+				Item.updateOrInsert(itemRepresentation: $0, at: unknownLocation())
+			}
+			return
+		}
+		
+			// do we already have a location that matches what's incoming?
+			// if we do, we will not update any properties; but we will check to see
+			// that we have all the associated items.
+		if let foundLocation = Location.object(withID: locationRepresentation.id) {
+				// possible point of discussion: should we update any current properties in this case?
+				//      YOU GET TO DECIDE!
+				// there's a case we should copy/update the name at least; but you would
+				// not want to update the colors or visitationOrder because we may
+				// be using this data already and put it into our own order.
+			locationRepresentation.items.forEach {
+				Item.updateOrInsert(itemRepresentation: $0, at: unknownLocation())
+			}
+			return
+		}
+		
+			//  all that's left is to add a new location; copy over property values from the
+			// incoming data, except for the visitationOrder, which must be computed
+			// so that the new location goes to the end of the list of non-UL locations.
+			// i have put that computation in the Location class, since it is done
+			// with a Core Data fetch.
+		let newLocation = addNewLocation()
+		newLocation.id = locationRepresentation.id
+		newLocation.name_ = locationRepresentation.name
+		newLocation.red_ = locationRepresentation.red
+		newLocation.green_ = locationRepresentation.green
+		newLocation.blue_ = locationRepresentation.blue
+		newLocation.opacity_ = locationRepresentation.opacity
+		if let position = Location.lastLocationPosition() {
+			newLocation.visitationOrder_ = position + 1
+		} else {
+			newLocation.visitationOrder_ = 1
+		}
+		
+			// finally add items for this new location
+		locationRepresentation.items.forEach {
+			Item.updateOrInsert(itemRepresentation: $0, at: newLocation)
+		}
+		
 	}
 	
 	// parameters for the Unknown Location.  this is called only if we try to fetch the
@@ -186,6 +246,28 @@ extension Location: Comparable {
 	
 	class func object(withID id: UUID) -> Location? {
 		return object(id: id, context: persistentStore.context) as Location?
+	}
+	
+		// added to support importing an archive
+		// returns the highest position value among all locations, other than for
+		// the unknown location that must always be last.
+	class func lastLocationPosition() -> Int32? {
+		let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()
+		fetchRequest.sortDescriptors
+			= [NSSortDescriptor(keyPath: \Location.visitationOrder_, ascending: false)]
+		fetchRequest.propertiesToFetch = ["visitationOrder_"]  // low overhead request (!)
+		do {
+			let locations = try persistentStore.context.fetch(fetchRequest)
+			if locations.count >= 2 { // if we have at least 2, it's the unknown plus others
+				return locations[1].visitationOrder_  // will have the highest position number
+			} else if locations.count == 1 {  // we have only the UL
+				return 1
+			}
+		} catch let error as NSError {
+			fatalError("Error fetching locations: \(error.localizedDescription), \(error.userInfo)")
+		}
+		return nil // should only happen on a fetch error, or if called when we did not have a UL
+
 	}
 	
 	// MARK: - Object Methods

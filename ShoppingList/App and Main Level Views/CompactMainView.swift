@@ -26,11 +26,12 @@ struct CompactMainView: View {
 			NavigationStack { LocationsView() }
 				.tabItem { Label("Locations", systemImage: "map") }
 			
-			NavigationStack { TimerView()  }
-				.tabItem { Label("Stopwatch", systemImage: "stopwatch") }
-			
 			NavigationStack { PreferencesView() }
 				.tabItem { Label("Preferences", systemImage: "gear") }
+			
+			NavigationStack { MoreView()  }
+				.tabItem { Label("More", systemImage: "ellipsis") }
+
 		} // end of TabView
 	} // end of var body: some View
 }

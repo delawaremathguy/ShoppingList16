@@ -18,8 +18,9 @@ struct RegularMainView: View {
 		case shoppingList
 		case purchasedList
 		case locationList
-		case inStoreTimer
+		//case inStoreTimer
 		case preferences
+		case more
 	}
 	
 	@State private var selection: NavigationItem? = .shoppingList
@@ -35,13 +36,13 @@ struct RegularMainView: View {
 			
 			Label("Locations", systemImage: "map")
 				.tag(NavigationItem.locationList)
-			
-			Label("Stopwatch", systemImage: "stopwatch")
-				.tag(NavigationItem.inStoreTimer)
-			
+						
 			Label("Preferences", systemImage: "gear")
 				.tag(NavigationItem.preferences)
 			
+			Label("More", systemImage: "ellipsis")
+				.tag(NavigationItem.more)
+
 		}
 	}
 	
@@ -58,11 +59,11 @@ struct RegularMainView: View {
 						PurchasedItemsView()
 					case .locationList:
 						LocationsView()
-					case .inStoreTimer:
-						TimerView()
 					case .preferences:
 						PreferencesView()
-					case .none:	// selection is an optional type, but will never be nil
+					case .more:
+						MoreView()
+					case .none:	// selection is an optional type, although it will never be nil
 						Text(".none")
 				}
 			}

@@ -2,6 +2,8 @@
 
 ShoppingList16 is a simple iOS app to process a shopping list that you can take to the grocery store with you, moving items off the list as you pick them up.  It persists data in Core Data (optionally, synched across your personal devices using iCloud if you configure the app correctly) written entirely with Swift and SwiftUI.  This project was posted using Xcode 14.2 and requires iOS 16.2 or later.
 
+* in ShoppingList16, i will be using iOS16-specific features more often. Please see the section "What's New in ShoppingList16" to see which ones are now being used (as of the initial release), as well as some things that have changed in both the UI and at the code level. 
+
 This is the fourth iteration of my original ShoppingList project and will one more time be my learning environment for new features in what most people call "SwiftUI 4," the version of SwiftUI released at WWDC in June, 2022.  I will try to use newer features available in iOS 16 whenever I can.
 
 * An [earlier version of this project](https://github.com/delawaremathguy/ShoppingList15) is available that works with XCode 13.5/iOS 15.  If you have not yet made the move to XCode 14/iOS 16, you should use this earlier project instead.  
@@ -14,14 +16,20 @@ This is the fourth iteration of my original ShoppingList project and will one mo
 
 Feel free to use this as is, to develop further, to completely ignore, or even just to inspect and then send me a note or Open an Issue to tell me I am doing this all wrong.  
 
-## Initial Release: 2 March, 2023
+## Latest Release: 25 July, 2023
 
-in ShoppingList16, i will be using iOS16-specific features more often. Please see the section "What's New in ShoppingList16" to see which ones are now used (as of this initial release), as well as some things that have changed in both the UI and at the code level. 
+* (*25Jul*) an Archive feature (Export/Import) is now available so that you can export all ShoppingList data to a file through the Files App, and import ShoppingList data from the Files App.  this will be useful if 
+    -- you only run the app locally, so you can keep a backup of data (if you're on the cloud, the cloud is your backup)
+    -- you want to share your data with someone else
+	this is achieved by using .fileImporter and .fileExporter (which are iOS 14 features).
+	
+	
+* (*25Jul*) there is a UI change: the Stopwatch tab for an in-store timer has been renamed as a "More..." tab and been moved to the last tab position.  this screen now contains the timer, options to save/restore (export/import) data through the Files app, and (when on the simulator) an option to load sample data so you can test out the app.
 
-### Most Recent Changes:
+* (*25Jul*) all of the somewhat unstructured "development" code to load sample data and write JSON that's been hiding in plain sight since the original SL project has been removed.  (it can now be done using the archive facility.)
 
-* (*16Mar*) the `.xcodeproj` project file(s) have now been added to the repo.  apologies for not catching this.
 
+See the ChangeLog below for other changes in this release of ShoppingList16.
 
 ## General App Structure
 
@@ -37,9 +45,9 @@ The main screen is a TabView (in portrait orientation) or Split View (in landsca
 
 ![](Img005.jpg) 
 
-* an in-store timer, to track how long it takes you to complete shopping (not shown), and
+* a user Preferences tab, which also contains 
 
-* a user Preferences tab, which also contains (for development purposes only) a button so you can load sample data to use to try out the app.
+* a "More..." tab that contains an in-store timer to track how long it takes you to complete shopping (not shown), buttons to export or import shopping list archives, and (for development purposes only) a button so you can load sample data so you can try out the app.
 
 For the first two tabs, tapping on the circular button on the leading edge of an item's display moves a shopping item from one list to the other list (from "on the shopping list" to "purchased" and vice-versa).  
 
@@ -57,17 +65,19 @@ Tapping on a Location in the list lets you edit location information, including 
 
 * What happens to Items at a Location when the Location is deleted?  The Items are not deleted, but are moved to the Unknown Location.
 
-The fourth tab is an in-store timer, with three simple button controls: "Start," "Stop," and "Reset."  This timer does *not* pause when the app goes into the background -- e.g., if you pull up a calculator or take a phone call while shopping. (*See GlobalTimer.swift if you wish to change this behaviour*.)
-
-Finally, there is a Preferences tab that contains:
+The fourth tab is a Preferences tab that contains:
 
 * a stepper to change the user default value for the number of days used to section out the PurchasedTabView;
-* a toggle to control whether a running stopwatch/timer should be suspended when the app is in the background;
-* and two buttons for "development-only" purposes, to allow wholesale loading of sample data and offloading data for later use. This area should be hidden for any production version of the app (*see Development.swift to hide this*).
+* a toggle to control whether a running stopwatch/timer should be suspended when the app is in the background.
+
+The final tab titled "More..." contains 
+
+* an in-store timer, with three simple button controls: "Start," "Stop," and "Reset."  This timer does *not* pause when the app goes into the background -- e.g., if you pull up a calculator or take a phone call while shopping. (*you can change this behaviour in Preferences*.)
+* two button to allow to to export or import archived ShoppingList data through the Files app.
 
 Here's what you do next:
 
-* **If you would like to test out this app and decide if it might be of interest to you**, run it on the simulator, go straight to the Preferences tab on startup and tap the "Load Sample Data" button.  Now you can play with the app.
+* **If you would like to test out this app and decide if it might be of interest to you**, run it on the simulator, go straight to the More... tab on startup and tap the "Load Sample Data" button.  Now you can play with the app.
 
 * **If you plan to install and use this app on a single device**, the app will start with an empty shopping list and a location list having only the special "Unknown Location"; from there you can create your own shopping items and locations associated with those items.  (*Suggestion: add Locations before adding Items!*)  I would recommend that you remove the development-only portion of the Preferences tab before installing the app on a real device (see comments in Development.swift).
 
@@ -132,9 +142,8 @@ Otherwise, just about all of the code is original or widely available, and it's 
 
 ## ChangeLog (beginning 2 March, 2023)
 
-### updates following the initial release
 
-### initial release notes
+* (*16Mar*) the `.xcodeproj` project file(s) have now been added to the repo.  apologies for not catching this.
 
 
 
