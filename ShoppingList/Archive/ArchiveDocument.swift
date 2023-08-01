@@ -60,7 +60,9 @@ struct ArchiveDocument: FileDocument {
 			throw ArchiveImportError.fileUnreadable
 		}
 		do {
-			locationRepresentations = try JSONDecoder().decode([LocationRepresentation].self, from: data)
+			let decoder = JSONDecoder()
+			decoder.dateDecodingStrategy = .iso8601
+			locationRepresentations = try decoder.decode([LocationRepresentation].self, from: data)
 		} catch let error {
 			print("Unable to read file: \(error.localizedDescription)")
 			locationRepresentations = []
@@ -92,7 +94,9 @@ struct ArchiveDocument: FileDocument {
 		
 			// try to decode the data, and we're done.
 		do {
-			locationRepresentations = try JSONDecoder().decode([LocationRepresentation].self, from: data)
+			let decoder = JSONDecoder()
+			decoder.dateDecodingStrategy = .iso8601
+			locationRepresentations = try decoder.decode([LocationRepresentation].self, from: data)
 		} catch let error as NSError {
 			print("Unable to decode file: \(error.localizedDescription)")
 			throw ArchiveImportError.fileNotDecodable
@@ -106,6 +110,7 @@ struct ArchiveDocument: FileDocument {
 	func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
 		let encoder = JSONEncoder()
 		encoder.outputFormatting = .prettyPrinted
+		encoder.dateEncodingStrategy = .iso8601
 		let data = try! encoder.encode(locationRepresentations)
 		return FileWrapper(regularFileWithContents: data)
 	}

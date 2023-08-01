@@ -184,13 +184,11 @@ extension Item {
 		// MARK: - Computed Properties
 	
 		// the date last purchased.  this fronts a Core Data optional attribute
-		// when no date is available, we'll set the date to ReferenceDate, for purposes of
-		// always having one for comparisons ("today" versus "earlier")
-	var dateLastPurchased: Date {
-		dateLastPurchased_ ?? Date(timeIntervalSinceReferenceDate: 1)
+	var dateLastPurchased: Date? {
+		dateLastPurchased_ // ?? Date(timeIntervalSinceReferenceDate: 1)
 	}
 	
-	var hasBeenPurchased: Bool { dateLastPurchased_ != nil }
+	// var hasBeenPurchased: Bool { dateLastPurchased_ != nil }
 	
 	// the name of its associated location
 	var locationName: String { location_?.name_ ?? "Not Available" }
@@ -264,6 +262,7 @@ extension Item {
 			newItem.quantity_ = Int32(itemRepresentation.quantity)
 			newItem.isAvailable_ = itemRepresentation.isAvailable
 			newItem.onList_ = itemRepresentation.onList
+			newItem.dateLastPurchased_ = itemRepresentation.dateLastPurchased
 			newItem.location_ = location
 		}
 	}

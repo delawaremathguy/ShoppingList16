@@ -16,15 +16,20 @@ This is the fourth iteration of my original ShoppingList project and will one mo
 
 Feel free to use this as is, to develop further, to completely ignore, or even just to inspect and then send me a note or Open an Issue to tell me I am doing this all wrong.  
 
-## Latest Release: 25 July, 2023
+## Latest Release: 1 August, 2023
 
-* (*25Jul*) an Archive feature (Export/Import) is now available so that you can export all ShoppingList data to a file through the Files App, and import ShoppingList data from the Files App.  this will be useful if 
+* (*01Aug*) during export/import, the dateLastPurchased value of an `Item` was not included (*duh!*).  this has been corrected by adding the property `ItemRepresentation.dateLastPurchased` as an optional Date.  the property is properly populated for export and read back during import. the JSON generated uses date format .iso8601.
+
+* (*01Aug*) the property `Item.dateLastPurchased` that fronts the Core Data attribute `Item.dateLastPurchased_` is now an optional and handled appropriately in code that relied on `Item.dateLastPurchased` previously delivering a non-optional date.
+
+* (*01Aug*) it can now be revealed: the Archive feature of 25 July was implemented because i have been looking ahead to using SwiftData as a replacement of Core Data.  however, you should know that certain aspects of SwiftData are incompatible with the current Core Data model of SL16.  consequently, to transition current shopping list data to any new version of SL that uses SwiftData (whether it's yours or mine), you will be required to archive the current data and then reload it for a SwiftData implementation of SL.
+
+* (*25Jul*) an Archive feature (Export/Import) is now available so that you can export all ShoppingList data to a file through the Files App, and import ShoppingList data from the Files App.  this is achieved by using .fileImporter and .fileExporter (which are iOS 14 features).  this feature will be useful if 
 
   - you only run the app locally, so you can keep a backup of data (if you're on the cloud, the cloud is your backup)
+  
   - you want to share your data with someone else
   
-	this is achieved by using .fileImporter and .fileExporter (which are iOS 14 features).
-	
 	
 * (*25Jul*) there is a UI change: the Stopwatch tab for an in-store timer has been renamed as a "More..." tab and been moved to the last tab position.  this screen now contains the timer, options to save/restore (export/import) data through the Files app, and (when on the simulator) an option to load sample data so you can test out the app.
 

@@ -48,8 +48,9 @@ class DraftItem: ObservableObject {
 		location = item.location
 		onList = item.onList
 		isAvailable = item.isAvailable
-		if item.hasBeenPurchased {
-			dateText = item.dateLastPurchased.formatted(date: .long, time: .omitted)
+		if let date = item.dateLastPurchased {
+		//if item.hasBeenPurchased {
+			dateText = date.formatted(date: .long, time: .omitted)
 		} else {
 			dateText = "(Never)"
 		}

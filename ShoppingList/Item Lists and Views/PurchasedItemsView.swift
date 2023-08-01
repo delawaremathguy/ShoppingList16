@@ -115,18 +115,20 @@ struct PurchasedItemsView: View {
 			// the one big section case is pretty darn easy:
 		if !multiSectionDisplay {
 			if searchText.isEmpty {
-				return [ItemSection(index: 1, title: "Items Purchased: \(items.count)",
+				return [ItemSection(index: 1, title: "Items: \(items.count)",
 														items: items.map({ $0 }))]
 			}
-			return [ItemSection(index: 1, title: "Items Purchased containing: \"\(searchText)\": \(searchQualifiedItems.count)",
+			return [ItemSection(index: 1, title: "Items containing: \"\(searchText)\": \(searchQualifiedItems.count)",
 													items: searchQualifiedItems)]
 		}
 		
 			// so we're doing two sections where we break these out
 			// into (Today + back historyMarker days) and (all the others)
 		let startingMarker = calendar.date(byAdding: .day, value: -historyMarker, to: today.start)!
-		let recentItems = searchQualifiedItems.filter({ $0.dateLastPurchased >= startingMarker })
-		let allOlderItems = searchQualifiedItems.filter({ $0.dateLastPurchased < startingMarker })
+		let recentItems = searchQualifiedItems
+			.filter({ $0.dateLastPurchased != nil && $0.dateLastPurchased! >= startingMarker })
+		let allOlderItems = searchQualifiedItems
+			.filter({ $0.dateLastPurchased == nil || $0.dateLastPurchased! < startingMarker })
 		
 			// return an array of two sections only
 		return [
@@ -154,7 +156,7 @@ struct PurchasedItemsView: View {
 	}
 	
 	func section2Title(count: Int) -> String {
-		var title = "Items Purchased Earlier"
+		var title = "(Other) Items"
 		if !searchText.isEmpty {
 			title += " containing \"\(searchText)\""
 		}

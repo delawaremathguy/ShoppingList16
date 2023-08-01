@@ -16,6 +16,7 @@ struct ItemRepresentation: Codable {
 	var onList: Bool
 	var isAvailable: Bool
 	var quantity: Int
+	var dateLastPurchased: Date?
 	
 	init(from item: Item) {
 		id = item.id!
@@ -23,6 +24,9 @@ struct ItemRepresentation: Codable {
 		onList = item.onList
 		isAvailable = item.isAvailable
 		quantity = item.quantity
+		// this was initially left out; note that the
+		// fronting property has now been redefined as an optional.
+		dateLastPurchased = item.dateLastPurchased
 	}
 }
 
