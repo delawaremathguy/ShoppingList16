@@ -16,7 +16,9 @@ This is the fourth iteration of my original ShoppingList project and will one mo
 
 Feel free to use this as is, to develop further, to completely ignore, or even just to inspect and then send me a note or Open an Issue to tell me I am doing this all wrong.  
 
-## Latest Release: 1 August, 2023
+## Latest Release: 2 August, 2023
+
+* (*02Aug*) although `Item.dateLastPurchased_` is an optional value as of yesterday (nil ==> never purchased), the Core Data model file (ShoppingList.xcdatamodeld) had a default value for this date; this has been removed, so `Item.dateLastPurchased_` will properly default to a nil value.
 
 * (*01Aug*) during export/import, the dateLastPurchased value of an `Item` was not included (*duh!*).  this has been corrected by adding the property `ItemRepresentation.dateLastPurchased` as an optional Date.  the property is properly populated for export and read back during import. the JSON generated uses date format .iso8601.
 
