@@ -83,6 +83,7 @@ struct ShoppingListView: View {
 		}
 		.sheet(isPresented: $isAddNewItemSheetPresented) {
 			AddNewItemView()
+				.interactiveDismissDisabled()
 		}
 		.onDisappear(perform: handleDisappear)
 		

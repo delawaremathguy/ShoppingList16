@@ -116,9 +116,9 @@ extension MoreView {
 
 extension MoreView {
 	
-	// we can quickly handle the return of the fileExporter, which is either telling
-	// us the URL where the file was saved (the app does not need this, but it
-	// is useful when working on the simulator) or what, if any, error occurred.
+		// we can quickly handle the return of the fileExporter, which is either telling
+		// us the URL where the file was saved (the app does not need this, but it
+		// is useful when working on the simulator) or what, if any, error occurred.
 	func handleFileExporterResult(result: Result<URL, Error>) {
 		switch result {
 			case .success(let url):

@@ -76,6 +76,7 @@ struct PurchasedItemsView: View {
 		}
 		.sheet(isPresented: $isAddNewItemSheetPresented) {
 			AddNewItemView()
+				.interactiveDismissDisabled()
 		}
 	} // end of var body: some View
 

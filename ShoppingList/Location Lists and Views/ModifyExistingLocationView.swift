@@ -46,7 +46,7 @@ struct ModifyExistingLocationView: View {
 			dismiss()
 		} label: {
 			HStack(spacing: 5) {
-				Image(systemName: "chevron.left")
+				Image(systemName: "chevron.backward")
 				Text("Back")
 			}
 		}

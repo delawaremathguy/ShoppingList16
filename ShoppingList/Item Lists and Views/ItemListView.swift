@@ -65,9 +65,8 @@ struct ItemListView: View {
 					} // end of contextMenu
 				} // end of ForEach
 			} // end of Section
-				//} // end of ForEach
 		}  // end of List ... phew!
-		.listStyle(InsetGroupedListStyle())
+		.listStyle(.insetGrouped)
 		.navigationDestination(for: Item.self) { item in
 			ModifyExistingItemView(item: item)
 		}

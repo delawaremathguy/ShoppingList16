@@ -16,9 +16,9 @@ import SwiftUI
  -- create a default set of values for a new shopping item (an ObservableObject)
  -- the body shows a Form in which the user can edit the default data
  -- we supply buttons in the navigation bar to create a new item from the edited data
-      and to dismiss (which can also be accomplished just by pulling down on the sheet,
-	 although we might want to add .interactiveDismissDisabled() to the sheet so
-	 no data will be discarded unless the user touches the Cancel button.
+      and to dismiss.  note: i have added .interactiveDismissDisabled() to the sheet so
+	 no data will be discarded unless the user touches the Cancel button ... i.e., the
+	 user cannot simply the AddNew sheet by pulling down on it.
  */
 	
 struct AddNewItemView: View {
@@ -26,7 +26,7 @@ struct AddNewItemView: View {
 	@Environment(\.dismiss) private var dismiss
 	
 		// this draftItem object contains all of the information
-		// for a new Item that are needed from the User
+		// for a new Item that is needed from the User
 	@StateObject private var draftItem: DraftItem
 
 		// custom init here to set up a draft for an Item to be added, one having default values

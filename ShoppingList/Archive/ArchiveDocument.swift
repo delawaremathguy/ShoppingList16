@@ -55,6 +55,7 @@ struct ArchiveDocument: FileDocument {
 		// in a MacOS app ... but it would be useful if you emailed an archive
 		// document to someone else, who then just by tapping on the document
 		// inside Mail will open the ShoppingList app and read in the document.
+		// (i have not implemented this capability as of yet ...)
 	init(configuration: ReadConfiguration) throws {
 		guard let data = configuration.file.regularFileContents else {
 			throw ArchiveImportError.fileUnreadable
@@ -106,7 +107,7 @@ struct ArchiveDocument: FileDocument {
 		// MARK: - Serialization (Output)
 	
 		// this will be called when the system wants to write data to disk.  in this case,
-		// we just need to encode what we have as data as a regular file.
+		// we just need to encode what we have as data to a regular file.
 	func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
 		let encoder = JSONEncoder()
 		encoder.outputFormatting = .prettyPrinted

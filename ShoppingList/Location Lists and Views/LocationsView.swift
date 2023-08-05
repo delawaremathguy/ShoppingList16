@@ -49,7 +49,7 @@ struct LocationsView: View {
 					.onMove(perform: moveLocations)
 				} // end of Section
 			} // end of List
-			.listStyle(InsetGroupedListStyle())
+			.listStyle(.insetGrouped)
 			
 			Divider() // keeps list from running through tab bar (!)
 		} // end of VStack

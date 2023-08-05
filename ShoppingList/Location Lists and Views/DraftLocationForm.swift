@@ -82,6 +82,7 @@ struct DraftLocationForm: View {
 		} // end of Form
 		.sheet(isPresented: $isAddNewItemSheetPresented) {
 			AddNewItemView(location: draftLocation.associatedLocation)
+				.interactiveDismissDisabled()
 		}
 
 	} // end of var body: some View
