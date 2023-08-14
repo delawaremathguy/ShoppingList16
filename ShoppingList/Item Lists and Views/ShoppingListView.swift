@@ -59,22 +59,15 @@ struct ShoppingListView: View {
  of the sectioning, so we push it off to a specialized subview.
  ---------- */
 			
-			if items.count == 0 {
+			if items.isEmpty {
 				EmptyListView(listName: "Shopping")
 			} else {
 				ItemListView(itemSections: itemSections,
 										 sfSymbolName: "purchased",
 										 multiSectionDisplay: $multiSectionDisplay)
-			}
-			
-/* ---------
- and for non-empty lists, we have a few buttons at the bottom for bulk operations
- ---------- */
-			
-			if items.count > 0 {
 				Divider()
 				ShoppingListBottomButtons()
-			} //end of if items.count > 0
+			} //end of if items.isEmpty
 			
 		} // end of VStack
 		.navigationBarTitle("Shopping List")
@@ -168,7 +161,7 @@ struct ShoppingListView: View {
 			.sorted(by: { $0.location.visitationOrder < $1.location.visitationOrder })
 
 			// if we have nothing on the list, there's nothing for ItemListView to show
-		guard items.count > 0 else { return [] }
+		if items.isEmpty { return [] }
 
 		// now restructure from (Location, [Item]) to [ItemSection].
 		// for a single section, just lump all the items of all the pairs

@@ -9,16 +9,11 @@
 import CoreData
 import SwiftUI	// because we reference Color
 
-// constants
+	// constants
 let kUnknownLocationName = "Unknown Location"
 let kUnknownLocationVisitationOrder: Int32 = INT32_MAX
 
-extension Location: Comparable {
-	
-	// add Comparable conformance: sort by visitation order
-	public static func < (lhs: Location, rhs: Location) -> Bool {
-		lhs.visitationOrder_ < rhs.visitationOrder_
-	}
+extension Location {
 	
 		// MARK: - Fronting Properties
 
@@ -59,9 +54,7 @@ extension Location: Comparable {
 	var isUnknownLocation: Bool { visitationOrder_ == kUnknownLocationVisitationOrder }
 		
 	var color: Color {
-		get {
-			Color(red: red_, green: green_, blue: blue_, opacity: opacity_)
-		}
+		get { Color(red: red_, green: green_, blue: blue_, opacity: opacity_) }
 		set {
 			if let components = newValue.cgColor?.components {
 				items.forEach({ $0.objectWillChange.send() })
@@ -74,7 +67,7 @@ extension Location: Comparable {
 	}
 	
 	var hasItemsOnShoppingList: Bool {
-		items.count(where: { $0.onList }) > 0
+		items.first(where: { $0.onList }) != nil
 	}
 
 	// MARK: - Useful Fetch Request
@@ -87,15 +80,57 @@ extension Location: Comparable {
 		request.sortDescriptors = [NSSortDescriptor(key: "visitationOrder_", ascending: true)]
 		return request
 	}
+	
+		// MARK: - Instance Methods
+	
+	func updateValues(from draftLocation: DraftLocation) {
+		
+			// before we update: items associated with this location may want to know about
+			// (some of) these changes.  reason: items rely on knowing some computed
+			// properties such as color, locationName, and visitationOrder.
+			// this makes sure that anyone who is observing an Item at this Location
+			// as an @ObservedObject will know something's about to change.:
+		items.forEach({ $0.objectWillChange.send() })
 
-	// MARK: - Class Functions
+		// we make changes directly in Core Data
+		name_ = draftLocation.locationName
+		// visitationOrder no longer editable in Draft code
+		//visitationOrder_ = Int32(draftLocation.visitationOrder)
+		if let components = draftLocation.color.cgColor?.components {
+			red_ = Double(components[0])
+			green_ = Double(components[1])
+			blue_ = Double(components[2])
+			opacity_ = Double(components[3])
+		} else {
+			red_ = 0.0
+			green_ = 1.0
+			blue_ = 0.0
+			opacity_ = 0.5
+		}
+		
+	}
+	
+} // end of extension Location
+
+	// MARK: - Comparable Conformance
+
+extension Location: Comparable {
+		// the natural sort is by visitation order
+	public static func < (lhs: Location, rhs: Location) -> Bool {
+		lhs.visitationOrder_ < rhs.visitationOrder_
+	}
+}
+
+	// MARK: - Class Functions & Static Properties
+
+extension Location {
 	
 		// this class variable must be set up when the app begins so that as a class,
 		// we can find the persistent store and its context.
 		// it has the type PersistentStore! which means that when it comes time to
 		// actually use it, it will have been set and will be non-nil.
 	static var persistentStore: PersistentStore!
-
+	
 	class func count() -> Int {
 		return count(context: persistentStore.context)
 	}
@@ -104,22 +139,22 @@ extension Location: Comparable {
 	class func allLocations() -> [Location] {
 		return allObjects(context: persistentStore.context) as! [Location]
 	}
-
-	// return a list of all user-defined locations, excluding the unknown location
+	
+		// return a list of all user-defined locations, excluding the unknown location
 	class func allUserLocations() -> [Location] {
 		var allLocations = allObjects(context: persistentStore.context) as! [Location]
 		allLocations.removeAll(where: { $0.isUnknownLocation })
 		return allLocations
 	}
-
-	// creates a new Location having an id, but then it's the user's responsibility
-	// to fill in the field values (and eventually save)
+	
+		// creates a new Location having an id, but then it's the user's responsibility
+		// to fill in the field values (and eventually save)
 	class func addNewLocation() -> Location {
 		let newLocation = Location(context: persistentStore.context)
 		newLocation.id = UUID()
 		return newLocation
 	}
-		
+	
 		// Added to support archiving ...
 		// this does a combination "insert if needed, else update" operation,
 		// based on the id property.
@@ -175,8 +210,8 @@ extension Location: Comparable {
 		
 	}
 	
-	// parameters for the Unknown Location.  this is called only if we try to fetch the
-	// unknown location and it is not present.
+		// parameters for the Unknown Location.  this is called only if we try to fetch the
+		// unknown location and it is not present.
 	private class func createUnknownLocation() -> Location {
 		let unknownLocation = addNewLocation()
 		unknownLocation.name_ = kUnknownLocationName
@@ -187,14 +222,14 @@ extension Location: Comparable {
 		unknownLocation.visitationOrder_ = kUnknownLocationVisitationOrder
 		return unknownLocation
 	}
-
+	
 	class func unknownLocation() -> Location {
-		// we only keep one "UnknownLocation" in the data store.  you can find it because its
-		// visitationOrder is the largest 32-bit integer. to make the app work, however, we need this
-		// default location to exist!
-		//
-		// so if we ever need to get the unknown location from the database, we will fetch it;
-		// and if it's not there, we will create it then.
+			// we only keep one "UnknownLocation" in the data store.  you can find it because its
+			// visitationOrder is the largest 32-bit integer. to make the app work, however, we need this
+			// default location to exist!
+			//
+			// so if we ever need to get the unknown location from the database, we will fetch it;
+			// and if it's not there, we will create it then.
 		let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()
 		fetchRequest.predicate = NSPredicate(format: "visitationOrder_ == %d", kUnknownLocationVisitationOrder)
 		do {
@@ -210,19 +245,19 @@ extension Location: Comparable {
 	}
 	
 	class func delete(_ location: Location) {
-		// you cannot delete the unknownLocation
+			// you cannot delete the unknownLocation
 		let theUnknownLocation = Location.unknownLocation()
 		guard location != theUnknownLocation else { return }
-
-		// get a list of all items for this location so we can work with them
+		
+			// get a list of all items for this location so we can work with them
 		let itemsAtThisLocation = location.items
 		
-		// reset location associated with each of these to the unknownLocation
-		// (which in turn, removes the current association with location). additionally,
-		// this could affect each item's computed properties
+			// reset location associated with each of these to the unknownLocation
+			// (which in turn, removes the current association with location). additionally,
+			// this could affect each item's computed properties
 		itemsAtThisLocation.forEach({ $0.location = theUnknownLocation })
 		
-		// now finish the deletion and save
+			// now finish the deletion and save
 		persistentStore.context.delete(location)
 		persistentStore.save()
 	}
@@ -254,7 +289,7 @@ extension Location: Comparable {
 	class func lastLocationPosition() -> Int32? {
 		let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()
 		fetchRequest.sortDescriptors
-			= [NSSortDescriptor(keyPath: \Location.visitationOrder_, ascending: false)]
+		= [NSSortDescriptor(keyPath: \Location.visitationOrder_, ascending: false)]
 		fetchRequest.propertiesToFetch = ["visitationOrder_"]  // low overhead request (!)
 		do {
 			let locations = try persistentStore.context.fetch(fetchRequest)
@@ -267,36 +302,8 @@ extension Location: Comparable {
 			fatalError("Error fetching locations: \(error.localizedDescription), \(error.userInfo)")
 		}
 		return nil // should only happen on a fetch error, or if called when we did not have a UL
-
-	}
-	
-	// MARK: - Object Methods
-	
-	func updateValues(from draftLocation: DraftLocation) {
-		
-			// before we update: items associated with this location may want to know about
-			// (some of) these changes.  reason: items rely on knowing some computed
-			// properties such as color, locationName, and visitationOrder.
-			// this makes sure that anyone who is observing an Item at this Location
-			// as an @ObservedObject will know something's about to change.:
-		items.forEach({ $0.objectWillChange.send() })
-
-		// we make changes directly in Core Data
-		name_ = draftLocation.locationName
-		// visitationOrder no longer editable in Draft code
-		//visitationOrder_ = Int32(draftLocation.visitationOrder)
-		if let components = draftLocation.color.cgColor?.components {
-			red_ = Double(components[0])
-			green_ = Double(components[1])
-			blue_ = Double(components[2])
-			opacity_ = Double(components[3])
-		} else {
-			red_ = 0.0
-			green_ = 1.0
-			blue_ = 0.0
-			opacity_ = 0.5
-		}
 		
 	}
 	
-} // end of extension Location
+}
+

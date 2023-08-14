@@ -14,7 +14,8 @@ struct SelectableItemRowView: View {
 	
 		// incoming are an item description, whether that item is selected or not, what symbol
 		// to use for animation, and what to do if the selector is tapped.  we treat
-		// the item as an @ObservedObject: we want to get redrawn if any property changes.
+		// the item as an @ObservedObject: we want to get redrawn if any property
+		// of the object changes.
 	@ObservedObject var item: Item
 	var selected: Bool
 	var sfSymbolName: String
@@ -22,36 +23,9 @@ struct SelectableItemRowView: View {
 	
 	var body: some View {
 		HStack {
-			
-				// --- build the little circle to tap on the left
-			ZStack {
-					// not sure if i want to have at least a visible circle here at the bottom layer or not.  for
-					// some color choices (e.g., Dairy = white) nothing appears to be shown as tappable
-					//				Circle()
-					//					.stroke(Color(.systemGray6))
-					//					.frame(width: 28.5, height: 28.5)
-				if selected {
-					Image(systemName: "circle.fill")
-						.foregroundColor(.blue)
-						.font(.title)
-				}
-				Image(systemName: "circle")
-					//					.foregroundColor(Color(item.uiColor))
-					.foregroundColor(item.color)
-					.font(.title)
-				if selected {
-					Image(systemName: sfSymbolName)
-						.foregroundColor(.white)
-						.font(.subheadline)
-				}
-			} // end of ZStack
-			.animation(.easeInOut, value: selected)
-			.frame(width: 24, height: 24)
-			.onTapGesture(perform: tapAction)
-			
+			tapCircle()
 			item.color
 				.frame(width: 10, height: 36)
-			
 				// name and location
 			VStack(alignment: .leading) {
 				
@@ -76,5 +50,32 @@ struct SelectableItemRowView: View {
 				.foregroundColor(Color.blue)
 			
 		} // end of HStack
+	}
+	
+	func tapCircle() -> some View {
+		ZStack {
+				// not sure if i want to have at least a visible circle here at the bottom layer or not.  for
+				// some color choices (e.g., Dairy = white) nothing appears to be shown as tappable
+				//				Circle()
+				//					.stroke(Color(.systemGray6))
+				//					.frame(width: 28.5, height: 28.5)
+			if selected {
+				Image(systemName: "circle.fill")
+					.foregroundColor(.blue)
+					.font(.title)
+			}
+			Image(systemName: "circle")
+				//					.foregroundColor(Color(item.uiColor))
+				.foregroundColor(item.color)
+				.font(.title)
+			if selected {
+				Image(systemName: sfSymbolName)
+					.foregroundColor(.white)
+					.font(.subheadline)
+			}
+		} // end of ZStack
+		.animation(.easeInOut, value: selected)
+		.frame(width: 24, height: 24)
+		.onTapGesture(perform: tapAction)
 	}
 }

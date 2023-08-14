@@ -9,17 +9,17 @@
 import SwiftUI
 
 /*
- the AddNewItemView is opened via a sheet from either the ShoppingListView
- or the PurchasedItemTabView, within a NavigationView, to do as it says: add
- a new shopping item.  the strategy is simple:
+the AddNewItemView is opened via a sheet from either the ShoppingListView
+or the PurchasedItemTabView, within a NavigationView, to do as it says: add
+a new shopping item.  the strategy is simple:
 	
- -- create a default set of values for a new shopping item (an ObservableObject)
+ -- create a default set of values for a new shopping item (a StateObject)
  -- the body shows a Form in which the user can edit the default data
  -- we supply buttons in the navigation bar to create a new item from the edited data
       and to dismiss.  note: i have added .interactiveDismissDisabled() to the sheet so
 	 no data will be discarded unless the user touches the Cancel button ... i.e., the
-	 user cannot simply the AddNew sheet by pulling down on it.
- */
+	 user cannot simply dismiss the AddNew sheet by pulling down on it.
+*/
 	
 struct AddNewItemView: View {
 	

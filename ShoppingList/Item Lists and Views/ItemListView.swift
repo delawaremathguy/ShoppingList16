@@ -11,30 +11,30 @@ import SwiftUI
 
 	// MARK: - ItemListView
 
-	// this is a subview of the ShoppingListView and the PurchasedItemsView, and shows a
-	// sectioned list of Items that is determined by the caller (who then must supply a function
-	// that determines how the sectioning should be done).
-	//
-	// each item that appears has a NavigationLink to a detail view and has a contextMenu
-	// associated with it; an action from the contextMenu  to delete an Item will require bringing
-	// up an alert to confirm the deletion, but we will not do that here in this view.  we will simply
-	// set the @Binding variable identifiableAlertItem from the parent view appropriately and let
-	// the parent deal with it (e.g., because the parent uses the same identifiableAlertItem structure
-	// to present its own alerts.
-	//
+/*
+this is a subview of the ShoppingListView and the PurchasedItemsView, and shows a
+sectioned list of Items that is determined by the caller (who then must do the work
+that determines how the sectioning should be done).
+
+each item that appears has a NavigationLink to a detail view and has a contextMenu
+associated with it; an action from the contextMenu to delete an Item will require bringing
+up an alert to confirm the deletion.
+*/
+
 struct ItemListView: View {
 	
-		// this is the incoming section layout from the ShoppingListView or the PurchasedItemsView
+		// this is the incoming section layout handed to us
+		// by either the ShoppingListView or the PurchasedItemsView
 	var itemSections: [ItemSection]
 
 		// the symbol to show for an Item that is tapped
 	var sfSymbolName: String
 	
-	// controls for opening a confirmation dialog to delete some Item:
-	// a Bool to trigger the dialog, plus a reference to the Item to be
-	// deleted (set in the Context Menu).  also, to make the strings
-	// defined in the confirmation dialog a little less ugly, we'll define
-	// a computed variable to return the item's name.
+		// controls for opening a confirmation dialog to delete some Item:
+		// a Bool to trigger the dialog, plus a reference to the Item to be
+		// deleted (set in the Context Menu).  also, to make the strings
+		// defined in the confirmation dialog a little less ugly, we'll define
+		// a computed variable to return the item's name.
 	@State private var isConfirmItemDeletePresented = false
 	@State private var itemToDelete: Item?
 	private var itemToDeleteName: String {
@@ -47,7 +47,7 @@ struct ItemListView: View {
 		// this is a temporary holding array for items being moved to the other list.  it's a
 		// @State variable, so if any SelectableItemRowView or a context menu adds an Item
 		// to this array, we will get some redrawing + animation; and we'll also have queued
-		// the actual execution of the move to the purchased list to follow after the animation
+		// the actual execution of the move to the other list to follow after the animation
 		// completes -- and that deletion will again change this array and redraw.
 	@State private var itemsChecked = [Item]()
 		
@@ -111,23 +111,23 @@ struct ItemListView: View {
 	
 	@ViewBuilder
 	func ItemContextMenu(item: Item) -> some View {
-			Button(action: { item.toggleOnListStatus() }) {
-				Text(item.onList ? "Move to Purchased" : "Move to ShoppingList")
-				Image(systemName: item.onList ? "purchased" : "cart")
-			}
-			
-			Button(action: { item.toggleAvailableStatus() }) {
-				Text(item.isAvailable ? "Mark as Unavailable" : "Mark as Available")
-				Image(systemName: item.isAvailable ? "pencil.slash" : "pencil")
-			}
-			
+		Button(action: { item.toggleOnListStatus() }) {
+			Text(item.onList ? "Move to Purchased" : "Move to ShoppingList")
+			Image(systemName: item.onList ? "purchased" : "cart")
+		}
+		
+		Button(action: { item.toggleAvailableStatus() }) {
+			Text(item.isAvailable ? "Mark as Unavailable" : "Mark as Available")
+			Image(systemName: item.isAvailable ? "pencil.slash" : "pencil")
+		}
+		
 		Button {
 			itemToDelete = item
 			isConfirmItemDeletePresented = true
 		} label: {
-				Text("Delete This Item")
-				Image(systemName: "trash")
-			}
+			Text("Delete This Item")
+			Image(systemName: "trash")
+		}
 	}
 
 	// MARK: Helper Functions

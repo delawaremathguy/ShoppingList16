@@ -75,7 +75,7 @@ struct PurchasedItemsView: View {
 			ToolbarItem(placement: .navigationBarTrailing, content: addNewButton)
 		}
 		.sheet(isPresented: $isAddNewItemSheetPresented) {
-			AddNewItemView()
+			AddNewItemView(suggestedName: searchText)
 				.interactiveDismissDisabled()
 		}
 	} // end of var body: some View
