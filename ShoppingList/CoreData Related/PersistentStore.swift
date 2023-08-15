@@ -36,9 +36,9 @@ final class PersistentStore: ObservableObject {
 		
 		// you need to decide which of NSPersistentContainer or NSPersistentCloudKitContainer
 		// you want to use (the latter is for sharing across devices associated with the same iCloud
-		// identifier.
+		// identifier.)
 		// and to make this work, you'll also need to update the bundle identifier
-		// (it cannot be com.dela.ware.math.ShoppingList).
+		// (it cannot be com.dela.ware.math.ShoppingList -- that's my container).
 #warning("⚠️ Please choose correct definition of Persistent Container")
 #if targetEnvironment(simulator)
 		// i avoid using the cloud with the simulator.  reason: i prefer to keep the simulator
@@ -69,12 +69,12 @@ final class PersistentStore: ObservableObject {
 		// also, once you use NSPersistentCloudKitContainer and turn these on, then you should leave
 		// these on, even if you just now want to use what's on-disk with NSPersistentContainer and
 		// without cloud access.
-		guard let persistentStoreDescriptions = container.persistentStoreDescriptions.first else {
+		guard let persistentStoreDescription = container.persistentStoreDescriptions.first else {
 			fatalError("\(#function): Failed to retrieve a persistent store description.")
 		}
-		persistentStoreDescriptions.setOption(true as NSNumber,
+		persistentStoreDescription.setOption(true as NSNumber,
 																					forKey: NSPersistentHistoryTrackingKey)
-		persistentStoreDescriptions.setOption(true as NSNumber,
+		persistentStoreDescription.setOption(true as NSNumber,
 																					forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
 		
 		container.loadPersistentStores(completionHandler: { (storeDescription, error) in

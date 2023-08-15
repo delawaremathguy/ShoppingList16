@@ -105,8 +105,7 @@ struct ShoppingListView: View {
 			.confirmationDialog("Move All Off List?",
 													isPresented: $confirmMoveAllOffListIsPresented,
 													titleVisibility: .visible) {
-				Button("Yes", role: .destructive,
-							 action: Item.moveAllItemsOffShoppingList)
+				Button("Yes", role: .destructive, action: moveAllItemsOffShoppingList)
 			}
 
 			
@@ -123,6 +122,12 @@ struct ShoppingListView: View {
 	}
 
 	// MARK: - Helper Functions
+	
+	private func moveAllItemsOffShoppingList() {
+		for item in items {
+			item.onList = false
+		}
+	}
 	
 	private func handleDisappear() {
 			// we save when this view goes off-screen.  we could use a more aggressive

@@ -176,8 +176,8 @@ extension Item {
 		}
 		set {
 			location_?.objectWillChange.send()
+			newValue.objectWillChange.send()
 			location_ = newValue
-			location_?.objectWillChange.send()
 		}
 	}
 		
@@ -211,7 +211,39 @@ extension Item {
 		return request
 	}
 	
+
+	
+	// MARK: - Object Methods
+	
+	func toggleAvailableStatus() {
+		isAvailable.toggle()
+		Self.persistentStore.save()
+	}
+
+	func toggleOnListStatus() {
+		onList = !onList
+		Self.persistentStore.save()
+	}
+
+	func markAvailable() {
+		isAvailable_ = true
+		Self.persistentStore.save()
+	}
+	
+	private func updateValues(from draftItem: DraftItem) {
+		name_ = draftItem.name
+		quantity_ = Int32(draftItem.quantity)
+		onList_ = draftItem.onList
+		isAvailable_ = draftItem.isAvailable
+		location_ = draftItem.location
+	}
+	
+}
+
 	// MARK: - Class variable and functions for CRUD operations
+
+extension Item {
+	
 	
 		// this class variable must be set up when the app begins so that as a class,
 		// we can find the persistent store and its context.
@@ -222,7 +254,7 @@ extension Item {
 	class func count() -> Int {
 		return count(context: persistentStore.context)
 	}
-
+	
 	class func allItems() -> [Item] {
 		return allObjects(context: persistentStore.context) as! [Item]
 	}
@@ -266,14 +298,14 @@ extension Item {
 			newItem.location_ = location
 		}
 	}
-
 	
-	// updates data for an Item that the user has directed from an Add or Modify View.
-	// if the incoming data is not associated with an item, we need to create it first
+	
+		// updates data for an Item that the user has directed from an Add or Modify View.
+		// if the incoming data is not associated with an item, we need to create it first
 	class func updateAndSave(using draftItem: DraftItem) {
-		// if we can find an Item with the given id, use it, else create one
+			// if we can find an Item with the given id, use it, else create one
 		if let id = draftItem.id,
-			let item = Item.object(id: id, context: persistentStore.context) {
+			 let item = Item.object(id: id, context: persistentStore.context) {
 			item.updateValues(from: draftItem)
 		} else {
 			let newItem = Item.addNewItem()
@@ -281,49 +313,22 @@ extension Item {
 		}
 		persistentStore.save()
 	}
-
+	
 	class func delete(_ item: Item) {
-		// remove the reference to this item from its associated location
-		// that location will need to know (for SwiftUI display) that some
-		// computed properties (e.g., its itemCount) may change with this deletion.
+			// remove the reference to this item from its associated location
+			// that location will need to know (for SwiftUI display) that some
+			// computed properties (e.g., its itemCount) may change with this deletion.
 		item.location_?.objectWillChange.send()
 		item.location_ = nil
 		
-		// now delete and save
+			// now delete and save
 		persistentStore.context.delete(item)
 		persistentStore.save()
 	}
 	
-	class func moveAllItemsOffShoppingList() {
-		for item in allItems().filter({ $0.onList }) {
-			item.onList = false
-		}
-	}
-	
-	// MARK: - Object Methods
-	
-	func toggleAvailableStatus() {
-		isAvailable.toggle()
-		Self.persistentStore.save()
-	}
-
-	func toggleOnListStatus() {
-		onList = !onList
-		Self.persistentStore.save()
-	}
-
-	func markAvailable() {
-		isAvailable_ = true
-		Self.persistentStore.save()
-	}
-	
-	private func updateValues(from draftItem: DraftItem) {
-		name_ = draftItem.name
-		quantity_ = Int32(draftItem.quantity)
-		onList_ = draftItem.onList
-		isAvailable_ = draftItem.isAvailable
-		location_ = draftItem.location
-	}
-	
+//	class func moveAllItemsOffShoppingList() {
+//		for item in allItems().filter({ $0.onList }) {
+//			item.onList = false
+//		}
+//	}
 }
-

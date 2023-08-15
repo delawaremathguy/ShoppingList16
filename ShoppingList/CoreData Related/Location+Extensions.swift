@@ -174,13 +174,13 @@ extension Location {
 			// if we do, we will not update any properties; but we will check to see
 			// that we have all the associated items.
 		if let foundLocation = Location.object(withID: locationRepresentation.id) {
-				// possible point of discussion: should we update any current properties in this case?
+				// possible point of discussion: should we update any current location properties in this case?
 				//      YOU GET TO DECIDE!
 				// there's a case we should copy/update the name at least; but you would
 				// not want to update the colors or visitationOrder because we may
 				// be using this data already and put it into our own order.
 			locationRepresentation.items.forEach {
-				Item.updateOrInsert(itemRepresentation: $0, at: unknownLocation())
+				Item.updateOrInsert(itemRepresentation: $0, at: foundLocation)
 			}
 			return
 		}
