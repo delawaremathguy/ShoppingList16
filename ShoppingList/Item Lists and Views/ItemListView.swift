@@ -121,7 +121,7 @@ struct ItemListView: View {
 			Image(systemName: item.isAvailable ? "pencil.slash" : "pencil")
 		}
 		
-		Button {
+		Button(role: .destructive) {
 			itemToDelete = item
 			isConfirmItemDeletePresented = true
 		} label: {

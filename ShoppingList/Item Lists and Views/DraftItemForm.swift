@@ -90,10 +90,10 @@ struct DraftItemForm: View {
 				// Section 2. Item Management (Delete), if present
 			if itemExists {
 				Section(header: Text("Shopping Item Management")) {
-					Button("Delete This Shopping Item") {
+					Button("Delete This Shopping Item", role: .destructive) {
 						alertIsPresented = true
 					}
-					.foregroundColor(Color.red)
+					//.foregroundColor(Color.red)
 					.hCentered()
 					.confirmationDialog("Delete \'\(draftItem.name)\'?",
 															isPresented: $alertIsPresented,

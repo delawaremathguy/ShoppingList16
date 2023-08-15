@@ -100,7 +100,13 @@ final class PersistentStore: ObservableObject {
 		// the cloud.  i don't think there's any harm in adding these even for a single, on-disk
 		// local store.
 		container.viewContext.automaticallyMergesChangesFromParent = true
-		container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+		container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+		
+		// (3) when a Core Data object is deleted, it somewhat remains in memory as a
+		// bit of a zombie object.  setting this to true (which i believe is the default) makes
+		// sure that the isDeleted property of the object is set ... so we might ask about
+		// it if we want in certain cases.  but in my experience, i'm not convinced
+		// isDeleted returns the value true.
 		container.viewContext.shouldDeleteInaccessibleFaults = true
 		return container
 	}()

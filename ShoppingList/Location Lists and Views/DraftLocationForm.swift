@@ -51,10 +51,10 @@ struct DraftLocationForm: View {
 				// Section 2: Delete button, if the data is associated with an existing Location
 			if locationCanBeDeleted {
 				Section(header: Text("Location Management")) {
-					Button("Delete This Location")  {
+					Button("Delete This Location", role: .destructive)  {
 						isConfirmDeleteLocationPresented = true // trigger confirmation dialog
 					}
-					.foregroundColor(Color.red)
+					//.foregroundColor(Color.red)
 					.hCentered()
 					.confirmationDialog("Delete \'\(draftLocation.locationName)\'?",
 															isPresented: $isConfirmDeleteLocationPresented,

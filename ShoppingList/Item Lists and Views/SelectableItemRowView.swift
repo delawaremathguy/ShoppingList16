@@ -33,8 +33,7 @@ struct SelectableItemRowView: View {
 					Text(item.name)
 				} else {
 					Text(item.name)
-						.italic()
-						.strikethrough()
+						.italic().strikethrough()
 				}
 				
 				Text(item.locationName)
