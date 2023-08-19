@@ -111,7 +111,8 @@ struct ItemListView: View {
 	
 	@ViewBuilder
 	func ItemContextMenu(item: Item) -> some View {
-		Button(action: { item.toggleOnListStatus() }) {
+//		Button(action: { item.toggleOnListStatus() }) {
+		Button(action: { item.onList.toggle() }) {
 			Text(item.onList ? "Move to Purchased" : "Move to ShoppingList")
 			Image(systemName: item.onList ? "purchased" : "cart")
 		}
@@ -141,7 +142,8 @@ struct ItemListView: View {
 				// and we queue the actual removal long enough to allow animation to finish
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.50) {
 				withAnimation {
-					item.toggleOnListStatus()
+//					item.toggleOnListStatus()
+					item.onList.toggle()
 					itemsChecked.removeAll(where: { $0 == item })
 				}
 			}

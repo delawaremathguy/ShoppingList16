@@ -112,7 +112,8 @@ struct ShoppingListView: View {
 			if !items.allSatisfy({ $0.isAvailable })  {
 				Spacer()
 				Button("Mark All Available") {
-					items.forEach { $0.markAvailable() }
+//					items.forEach { $0.markAvailable() }
+					items.forEach { $0.isAvailable = true }
 				}
 			}
 			

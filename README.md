@@ -16,9 +16,11 @@ This is the fourth iteration of my original ShoppingList project and will one mo
 
 Feel free to use this as is, to develop further, to completely ignore, or even just to inspect and then send me a note or Open an Issue to tell me I am doing this all wrong.  
 
-## Latest Release of Note: 15 August, 2023
+## Latest Release of Note: 19 August, 2023
 
-* (*15Aug*) some cleaning and updating of code and comments is underway, but one bug was discovered and fixed: when importing an archive, if an incoming Location matched an existing Location (based on UUID), the associated incoming items were being added to the unknown location by mistake.  this is fixed: incoming items are being added to the existing Location.
+* (*19Aug*) minor cleaning.  for example, when moving an item from one list to another, or when marking all items on the shopping list available, we handle this simply and directly. (*we no longer use a class function on Item to do this and also save the change; we don't need to so aggressively save data.  and a slightly different saving strategy is in the works.*)
+
+ (*15Aug*) some cleaning and updating of code and comments is underway, but one bug was discovered and fixed: when importing an archive, if an incoming Location matched an existing Location (based on UUID), the associated incoming items were being added to the unknown location by mistake.  this is fixed: incoming items are being added to the existing Location.
 
 * (*02Aug*) although `Item.dateLastPurchased_` is an optional value as of yesterday (nil ==> never purchased), the Core Data model file (ShoppingList.xcdatamodeld) had a default value for this date; this has been removed, so `Item.dateLastPurchased_` will properly default to a nil value.
 
@@ -27,17 +29,6 @@ Feel free to use this as is, to develop further, to completely ignore, or even j
 * (*01Aug*) the property `Item.dateLastPurchased` that fronts the Core Data attribute `Item.dateLastPurchased_` is now an optional and handled appropriately in code that relied on `Item.dateLastPurchased` previously delivering a non-optional date.
 
 * (*01Aug*) it can now be revealed: the Archive feature of 25 July was implemented because i have been looking ahead to using SwiftData as a replacement of Core Data.  however, you should know that certain aspects of SwiftData are incompatible with the current Core Data model of SL16.  consequently, to transition current shopping list data to any new version of SL that uses SwiftData (whether it's yours or mine), you will be required to archive the current data and then reload it for a SwiftData implementation of SL.
-
-* (*25Jul*) an Archive feature (Export/Import) is now available so that you can export all ShoppingList data to a file through the Files App, and import ShoppingList data from the Files App.  this is achieved by using .fileImporter and .fileExporter (which are iOS 14 features).  this feature will be useful if 
-
-  - you only run the app locally, so you can keep a backup of data (if you're on the cloud, the cloud is your backup)
-  
-  - you want to share your data with someone else
-  
-	
-* (*25Jul*) there is a UI change: the Stopwatch tab for an in-store timer has been renamed as a "More..." tab and been moved to the last tab position.  this screen now contains the timer, options to save/restore (export/import) data through the Files app, and (when on the simulator) an option to load sample data so you can test out the app.
-
-* (*25Jul*) all of the somewhat unstructured "development" code to load sample data and write JSON that's been hiding in plain sight since the original SL project has been removed.  (it can now be done using the archive facility.)
 
 
 See the ChangeLog below for other changes in this release of ShoppingList16.
@@ -153,6 +144,15 @@ Otherwise, just about all of the code is original or widely available, and it's 
 
 ## ChangeLog (beginning 2 March, 2023)
 
+* (*25Jul*) an Archive feature (Export/Import) is now available so that you can export all ShoppingList data to a file through the Files App, and import ShoppingList data from the Files App.  this is achieved by using .fileImporter and .fileExporter (which are iOS 14 features).  this feature will be useful if 
+
+  - you only run the app locally, so you can keep a backup of data (if you're on the cloud, the cloud is your backup)
+  
+  - you want to share your data with someone else
+	
+* (*25Jul*) there is a UI change: the Stopwatch tab for an in-store timer has been renamed as a "More..." tab and been moved to the last tab position.  this screen now contains the timer, options to save/restore (export/import) data through the Files app, and (when on the simulator) an option to load sample data so you can test out the app.
+
+* (*25Jul*) all of the somewhat unstructured "development" code to load sample data and write JSON that's been hiding in plain sight since the original SL project has been removed.  (it can now be done using the archive facility.)
 
 * (*16Mar*) the `.xcodeproj` project file(s) have now been added to the repo.  apologies for not catching this.
 

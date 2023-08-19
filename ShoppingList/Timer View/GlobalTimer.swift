@@ -88,7 +88,7 @@ class InStoreTimer: ObservableObject {
 		// remember when we  shut down
 		lastStopDate = Date()
 		// throw out the timer
-		timer!.invalidate()
+		timer?.invalidate()
 		timer = nil  // should happen anyway with a weak variable
 	}
 	
