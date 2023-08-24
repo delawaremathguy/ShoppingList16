@@ -11,6 +11,9 @@ import CoreData
 
 final class PersistentStore: ObservableObject {
 	
+		// a reference to a task that delays saving data
+	private var saveTask: Task<Void, Error>?
+	
 	lazy var persistentContainer: NSPersistentContainer = {
 		/*
 		The persistent container for the application. This implementation
@@ -41,18 +44,21 @@ final class PersistentStore: ObservableObject {
 		// (it cannot be com.dela.ware.math.ShoppingList -- that's my container).
 #warning("⚠️ Please choose correct definition of Persistent Container")
 #if targetEnvironment(simulator)
-		// i avoid using the cloud with the simulator.  reason: i prefer to keep the simulator
-		// off the cloud and away from real data that's being used on-device and shared with the
-		// cloud ... i always want it to be a test bed where i can do outrageous things, such as
-		// "delete all data," and i certainly don't want to do that with my real data (should the
-		// simulator).
+			// i avoid using the cloud with the simulator.  reason: i prefer to keep the simulator
+			// off the cloud and away from real data that's being used on-device and shared with the
+			// cloud ... i always want it to be a test bed where i can do outrageous things, such as
+			// "delete all data," and i certainly don't want to do that with my real data (should the
+			// simulator).
+			// there are also a number of comments about the simulator not always working
+			// well with cloud sync, if signed into iCloud.
 		let container = NSPersistentContainer(name: "ShoppingList")
 #else
-		// but for a device, YOU must decide whether you'll just keep all data local, or
-		// whether you feel the need to share with your other devices through the cloud.
-		// USE  THIS DEFINITION (DEFAULT) FOR CONTAINER for on-device-only data storage:
+			// but for a device, YOU must decide whether you'll just keep all data local, or
+			// whether you feel the need to share with your other devices through the cloud.
+			// USE  THIS DEFINITION (DEFAULT) FOR CONTAINER for on-device-only data storage:
 		let container = NSPersistentContainer(name: "ShoppingList")
-		// OR THIS DEFINITION FOR CONTAINER for on-device data storage shared via the cloud
+			// OR THIS DEFINITION FOR CONTAINER for on-device data storage shared via the cloud
+			// and remember: you need a paid Apple Developer Subscription to work with the cloud.
 //		let container = NSPersistentCloudKitContainer(name: "ShoppingList")
 #endif
 
@@ -96,23 +102,40 @@ final class PersistentStore: ObservableObject {
 			
 		})
 		
-		// (2) also suggested for cloud-based Core Data are the two lines below for syncing with
-		// the cloud.  i don't think there's any harm in adding these even for a single, on-disk
-		// local store.
+			// (2) also suggested for cloud-based Core Data are the two lines below for syncing with
+			// the cloud.  i don't think there's any harm in adding these even for a single, on-disk
+			// local store.
 		container.viewContext.automaticallyMergesChangesFromParent = true
 		container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
 		
-		// (3) when a Core Data object is deleted, it somewhat remains in memory as a
-		// bit of a zombie object.  setting this to true (which i believe is the default) makes
-		// sure that the isDeleted property of the object is set ... so we might ask about
-		// it if we want in certain cases.  but in my experience, i'm not convinced
-		// isDeleted returns the value true.
+			// (3) when a Core Data object is deleted, it somewhat remains in memory as a
+			// bit of a zombie object.  setting this to true (which i believe is the default) makes
+			// sure that the isDeleted property of the object is set ... so we might ask about
+			// it if we want in certain cases.  but in my experience, i'm not convinced
+			// isDeleted returns the value true.
 		container.viewContext.shouldDeleteInaccessibleFaults = true
+		
+		
+			// this allows us to detect changes occurring outside of our code and update our UI,
+			// according to Paul Hudson.  this is a recent addition, and to tell you the truth,
+			// i have not had problems prior to including this: i think all the @FetchRequests
+			// out there pick this up already.  but whether @ObservedObjects are getting
+			// the message, well,, that's a different question that might be addressed here.
+		NotificationCenter.default.addObserver(forName: .NSPersistentStoreRemoteChange,
+																					 object: container.persistentStoreCoordinator,
+																					 queue: .main,
+																					 using: remoteStoreChanged)
+
 		return container
 	}()
 	
 	var context: NSManagedObjectContext { persistentContainer.viewContext }
 	
+		// call save to update the persistent store on disk "right away."
+		// call this directly after all deletions; most other times, you
+		// should be calling queueSave(), which delays/debounces save
+		// operations so that we're grouping small changes that occur
+		// in rapid succession into a single save operation.
 	func save() {
 		if context.hasChanges {
 			do {
@@ -121,5 +144,38 @@ final class PersistentStore: ObservableObject {
 				NSLog("Unresolved error saving context: \(error), \(error.userInfo)")
 			}
 		}
+	}
+	
+/*
+ *** code below courtesy of Paul Hudson ***
+ call queueSave when saving data need not be immediate, but can wait
+ a little bit.   we just set up a task to do the saving for us and define it
+ so that it will not activate for a few seconds (or your choice of length
+ of inactivity).
+ for example, this means that if you can queueSave and then right away,
+say within a second or two, call queueSave again, we're not saving twice;
+ rather, we cancel any stored saving task and restart a new one with a
+ new "countdown clock" to do the save.
+ 
+ *** of note ***: we WILL call save() directly in the case of Item and Location
+ object DELETIONS.  there are known issues with the timing of deletions with
+ SwiftUI's occasional access to @ObservedObjects that are deleted, and so
+ saving right after a deletion seems to keep some of these problems under control.
+ */
+	let saveDelay = 5 // a five-second debouncing of save operations
+	func queueSave() {
+			// cancel any existing, queued task to save
+		saveTask?.cancel()
+			// put in a new/replacement task to save after a delay.
+		saveTask = Task {
+			try await Task.sleep(for: .seconds(saveDelay))
+			save()
+		}
+	}
+	
+		// if the remote store changes, this then re-broadcasts the change to anyone
+		// who is listening.
+	func remoteStoreChanged(_ notification: Notification) {
+		objectWillChange.send()
 	}
 }

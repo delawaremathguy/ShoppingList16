@@ -69,7 +69,6 @@ struct PurchasedItemsView: View {
 		} // end of VStack
 		.searchable(text: $searchText)
 		.onAppear(perform: handleOnAppear)
-		.onDisappear(perform: handleDisappear)
 		.navigationBarTitle("Purchased List")
 		.toolbar {
 			ToolbarItem(placement: .navigationBarTrailing, content: addNewButton)
@@ -95,14 +94,7 @@ struct PurchasedItemsView: View {
 		searchText = "" // clear searchText, get a clean screen
 		today.update() // also recompute what "today" means, so the sectioning is correct
 	}
-	
-	func handleDisappear() {
-			// we save when this view goes off-screen.  we could use a more aggressive
-			// strategy for saving data out to persistent storage, but saving here should
-			// get the job done.
-		persistentStore.save()
-	}
-	
+		
 		// the idea of this function is to break out the purchased Items into sections,
 		// where we can produce either one section for everything, or else two sections
 		// if multiSectionDisplay == true with:

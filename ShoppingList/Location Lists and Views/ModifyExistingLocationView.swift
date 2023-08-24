@@ -42,7 +42,7 @@ struct ModifyExistingLocationView: View {
 			if draftLocation.associatedLocation != nil {
 				Location.updateAndSave(using: draftLocation)
 			}
-			persistentStore.save()
+			persistentStore.queueSave()
 			dismiss()
 		} label: {
 			HStack(spacing: 5) {

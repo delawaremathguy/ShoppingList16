@@ -259,7 +259,7 @@ extension Location {
 		
 			// now finish the deletion and save
 		persistentStore.context.delete(location)
-		persistentStore.save()
+		persistentStore.save()	// always save right after a delete
 	}
 	
 	class func updateAndSave(using draftLocation: DraftLocation) {
@@ -276,7 +276,7 @@ extension Location {
 			newLocation.visitationOrder_ = -1
 			newLocation.updateValues(from: draftLocation)
 		}
-		persistentStore.save()
+		persistentStore.queueSave()
 	}
 	
 	class func object(withID id: UUID) -> Location? {

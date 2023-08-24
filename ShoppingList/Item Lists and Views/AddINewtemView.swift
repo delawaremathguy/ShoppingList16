@@ -37,7 +37,7 @@ struct AddNewItemView: View {
 	
 		// the body is pretty short -- just call up a Form inside a NavigationStack
 		// to edit the fields of data for a new Item, and
-		// add a Cancel and Save button.
+		// add Cancel and Save buttons.
 	var body: some View {
 		NavigationStack {
 			DraftItemForm(draftItem: draftItem)

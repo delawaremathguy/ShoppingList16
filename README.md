@@ -16,19 +16,13 @@ This is the fourth iteration of my original ShoppingList project and will one mo
 
 Feel free to use this as is, to develop further, to completely ignore, or even just to inspect and then send me a note or Open an Issue to tell me I am doing this all wrong.  
 
-## Latest Release of Note: 19 August, 2023
+## Latest Release of Note: 24 August, 2023
+
+* (*24Aug*) implemented a delayed or lazy saving of data strategy so that we can now "save" after every change, but those "saves" are being debounced (avoiding multiple saves if changes are made frequently within a certain time window), and the actual save occurs a few seconds later.  consequently, the previous idea of saving in .onDisappear has been removed.
 
 * (*19Aug*) minor cleaning.  for example, when moving an item from one list to another, or when marking all items on the shopping list available, we handle this simply and directly. (*we no longer use a class function on Item to do this and also save the change; we don't need to so aggressively save data.  and a slightly different saving strategy is in the works.*)
 
- (*15Aug*) some cleaning and updating of code and comments is underway, but one bug was discovered and fixed: when importing an archive, if an incoming Location matched an existing Location (based on UUID), the associated incoming items were being added to the unknown location by mistake.  this is fixed: incoming items are being added to the existing Location.
-
-* (*02Aug*) although `Item.dateLastPurchased_` is an optional value as of yesterday (nil ==> never purchased), the Core Data model file (ShoppingList.xcdatamodeld) had a default value for this date; this has been removed, so `Item.dateLastPurchased_` will properly default to a nil value.
-
-* (*01Aug*) during export/import, the dateLastPurchased value of an `Item` was not included (*duh!*).  this has been corrected by adding the property `ItemRepresentation.dateLastPurchased` as an optional Date.  the property is properly populated for export and read back during import. the JSON generated uses date format .iso8601.
-
-* (*01Aug*) the property `Item.dateLastPurchased` that fronts the Core Data attribute `Item.dateLastPurchased_` is now an optional and handled appropriately in code that relied on `Item.dateLastPurchased` previously delivering a non-optional date.
-
-* (*01Aug*) it can now be revealed: the Archive feature of 25 July was implemented because i have been looking ahead to using SwiftData as a replacement of Core Data.  however, you should know that certain aspects of SwiftData are incompatible with the current Core Data model of SL16.  consequently, to transition current shopping list data to any new version of SL that uses SwiftData (whether it's yours or mine), you will be required to archive the current data and then reload it for a SwiftData implementation of SL.
+* (*15Aug*) some cleaning and updating of code and comments is underway, but one bug was discovered and fixed: when importing an archive, if an incoming Location matched an existing Location (based on UUID), the associated incoming items were being added to the unknown location by mistake.  this is fixed: incoming items are being added to the existing Location.
 
 
 See the ChangeLog below for other changes in this release of ShoppingList16.
@@ -143,6 +137,14 @@ Otherwise, just about all of the code is original or widely available, and it's 
 
 
 ## ChangeLog (beginning 2 March, 2023)
+
+* (*02Aug*) although `Item.dateLastPurchased_` is an optional value as of yesterday (nil ==> never purchased), the Core Data model file (ShoppingList.xcdatamodeld) had a default value for this date; this has been removed, so `Item.dateLastPurchased_` will properly default to a nil value.
+
+* (*01Aug*) during export/import, the dateLastPurchased value of an `Item` was not included (*duh!*).  this has been corrected by adding the property `ItemRepresentation.dateLastPurchased` as an optional Date.  the property is properly populated for export and read back during import. the JSON generated uses date format .iso8601.
+
+* (*01Aug*) the property `Item.dateLastPurchased` that fronts the Core Data attribute `Item.dateLastPurchased_` is now an optional and handled appropriately in code that relied on `Item.dateLastPurchased` previously delivering a non-optional date.
+
+* (*01Aug*) it can now be revealed: the Archive feature of 25 July was implemented because i have been looking ahead to using SwiftData as a replacement of Core Data.  however, you should know that certain aspects of SwiftData are incompatible with the current Core Data model of SL16.  consequently, to transition current shopping list data to any new version of SL that uses SwiftData (whether it's yours or mine), you will be required to archive the current data and then reload it for a SwiftData implementation of SL.
 
 * (*25Jul*) an Archive feature (Export/Import) is now available so that you can export all ShoppingList data to a file through the Files App, and import ShoppingList data from the Files App.  this is achieved by using .fileImporter and .fileExporter (which are iOS 14 features).  this feature will be useful if 
 

@@ -78,7 +78,6 @@ struct ShoppingListView: View {
 			AddNewItemView()
 				.interactiveDismissDisabled()
 		}
-		.onDisappear(perform: handleDisappear)
 		
 	} // end of body: some View
 	
@@ -105,15 +104,18 @@ struct ShoppingListView: View {
 			.confirmationDialog("Move All Off List?",
 													isPresented: $confirmMoveAllOffListIsPresented,
 													titleVisibility: .visible) {
-				Button("Yes", role: .destructive, action: moveAllItemsOffShoppingList)
+				Button("Yes", role: .destructive) {
+					items.forEach { $0.onList = false }
+					persistentStore.queueSave()
+				}
 			}
 
 			
 			if !items.allSatisfy({ $0.isAvailable })  {
 				Spacer()
 				Button("Mark All Available") {
-//					items.forEach { $0.markAvailable() }
 					items.forEach { $0.isAvailable = true }
+					persistentStore.queueSave()
 				}
 			}
 			
@@ -123,20 +125,7 @@ struct ShoppingListView: View {
 	}
 
 	// MARK: - Helper Functions
-	
-	private func moveAllItemsOffShoppingList() {
-		for item in items {
-			item.onList = false
-		}
-	}
-	
-	private func handleDisappear() {
-			// we save when this view goes off-screen.  we could use a more aggressive
-			// strategy for saving data out to persistent storage, but saving here should
-			// get the job done.
-		persistentStore.save()
-	}
-	
+		
 	private var itemSections: [ItemSection] {
 		// the code in this section has been restructured in SL16 so that the
 		// view becomes responsive to any change in the order of Locations

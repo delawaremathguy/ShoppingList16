@@ -23,6 +23,8 @@ up an alert to confirm the deletion.
 
 struct ItemListView: View {
 	
+	@EnvironmentObject private var persistentStore: PersistentStore
+	
 		// this is the incoming section layout handed to us
 		// by either the ShoppingListView or the PurchasedItemsView
 	var itemSections: [ItemSection]
@@ -111,13 +113,18 @@ struct ItemListView: View {
 	
 	@ViewBuilder
 	func ItemContextMenu(item: Item) -> some View {
-//		Button(action: { item.toggleOnListStatus() }) {
-		Button(action: { item.onList.toggle() }) {
+		Button {
+			item.onList.toggle()
+			persistentStore.queueSave()
+		} label: {
 			Text(item.onList ? "Move to Purchased" : "Move to ShoppingList")
 			Image(systemName: item.onList ? "purchased" : "cart")
 		}
 		
-		Button(action: { item.toggleAvailableStatus() }) {
+		Button {
+			item.isAvailable.toggle()
+			persistentStore.queueSave()
+		} label: {
 			Text(item.isAvailable ? "Mark as Unavailable" : "Mark as Available")
 			Image(systemName: item.isAvailable ? "pencil.slash" : "pencil")
 		}
@@ -142,7 +149,6 @@ struct ItemListView: View {
 				// and we queue the actual removal long enough to allow animation to finish
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.50) {
 				withAnimation {
-//					item.toggleOnListStatus()
 					item.onList.toggle()
 					itemsChecked.removeAll(where: { $0 == item })
 				}

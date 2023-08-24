@@ -65,7 +65,6 @@ struct LocationsView: View {
 			AddNewLocationView()
 		}
 		.onAppear { handleOnAppear() }
-		.onDisappear { persistentStore.save() }
 		
 	} // end of var body: some View
 	

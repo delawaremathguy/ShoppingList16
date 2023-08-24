@@ -210,24 +210,6 @@ Integer 32, and nil for every optional attribute).
 	
 	// MARK: - Object Methods
 	
-	func toggleAvailableStatus() {
-		isAvailable.toggle()
-		Self.persistentStore.save()
-	}
-
-// removed this ... we really do not have to save the store just because
-// and item was moved from one list to the other.  the same goes
-// for marking items as available.
-//	func toggleOnListStatus() {
-//		onList = !onList
-//		Self.persistentStore.save()
-//	}
-
-//	func markAvailable() {
-//		isAvailable = true
-//		Self.persistentStore.save()
-//	}
-	
 	private func updateValues(from draftItem: DraftItem) {
 		name_ = draftItem.name
 		quantity_ = Int32(draftItem.quantity)
@@ -311,7 +293,7 @@ extension Item {
 			let newItem = Item.addNewItem()
 			newItem.updateValues(from: draftItem)
 		}
-		persistentStore.save()
+		persistentStore.queueSave()
 	}
 	
 	class func delete(_ item: Item) {
@@ -323,7 +305,7 @@ extension Item {
 		
 			// now delete and save
 		persistentStore.context.delete(item)
-		persistentStore.save()
+		persistentStore.save()	// always save right after a delete
 	}
 	
 		// returns a Fetch Request (FR) that fetches Items that are either

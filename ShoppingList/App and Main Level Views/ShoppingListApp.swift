@@ -78,7 +78,7 @@ struct ShoppingListApp: App {
 	}
 	
 	func handleResignActive(_ note: Notification) {
-			// when going into background, save Core Data and shut down timer
+			// when going into background, save Core Data (right now, please) and shut down timer
 		persistentStore.save()
 		inStoreTimer.suspendForBackground()
 	}
