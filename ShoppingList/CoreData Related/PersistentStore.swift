@@ -137,6 +137,8 @@ final class PersistentStore: ObservableObject {
 		// operations so that we're grouping small changes that occur
 		// in rapid succession into a single save operation.
 	func save() {
+		saveTask?.cancel()	// we're saving right now, do kill any delayed save
+		saveTask = nil
 		if context.hasChanges {
 			do {
 				try context.save()
@@ -167,7 +169,7 @@ say within a second or two, call queueSave again, we're not saving twice;
 			// cancel any existing, queued task to save
 		saveTask?.cancel()
 			// put in a new/replacement task to save after a delay.
-		saveTask = Task {
+		saveTask = Task { @MainActor in
 			try await Task.sleep(for: .seconds(saveDelay))
 			save()
 		}
