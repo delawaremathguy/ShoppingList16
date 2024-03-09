@@ -1,6 +1,6 @@
 #  About "ShoppingList16"
 
-> Note. Development of the project has come to a full stop for Xcode 14/iOS 16.  All new development can be found at my [Xcode 15/iOS 17 project](https://github.com/delawaremathguy/ShoppingList16).
+> Note. Development of the project has come to a full stop for Xcode 14/iOS 16.  All new development can be found at my [Xcode 15/iOS 17 project](https://github.com/delawaremathguy/ShoppingList17).
 
 ShoppingList16 is a simple iOS app to process a shopping list that you can take to the grocery store with you, moving items off the list as you pick them up.  It persists data in Core Data (optionally, synched across your personal devices using iCloud if you configure the app correctly) written entirely with Swift and SwiftUI.  This project was posted using Xcode 14.2 and requires iOS 16.2 or later.
 
